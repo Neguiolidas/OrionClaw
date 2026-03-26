@@ -1,0 +1,27 @@
+# Ignore common files
+node_modules/
+.env
+.env.local
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Secrets (NEVER commit these)
+*.key
+*.pem
+.secrets
+auth-profiles.json
+
+# Temporary files
+*.tmp
+*.temp
+
+# Build outputs
+dist/
+build/

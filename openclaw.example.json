@@ -1,0 +1,28 @@
+{
+  "$schema": "https://docs.openclaw.ai/schema/openclaw.json",
+  "providers": {
+    "openrouter": {
+      "apiKey": "sk-or-v1-YOUR_KEY_HERE"
+    },
+    "google": {
+      "apiKey": "AIzaSy-YOUR_KEY_HERE"
+    },
+    "ollama": {
+      "baseUrl": "http://127.0.0.1:11434"
+    }
+  },
+  "channels": {
+    "telegram": {
+      "token": "YOUR_BOT_TOKEN"
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": "openrouter/meta-llama/llama-4-scout",
+      "compaction": {
+        "mode": "safeguard",
+        "reserveTokensFloor": 30000
+      }
+    }
+  }
+}
