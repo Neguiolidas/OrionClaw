@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OrionClaw - One-Click Installer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Background Effects -->
+    <div class="bg-effects">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+      <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">🐺</span>
+        <span class="logo-text">OrionClaw</span>
+      </div>
+      <nav class="nav">
+        <a href="#features">Features</a>
+        <a href="#install">Instalar</a>
+        <a href="https://github.com/Neguiolidas/OrionClaw" target="_blank">GitHub</a>
+      </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="badge">
+          <span class="badge-icon">✨</span>
+          <span>Multi-Agent Orchestration • 100% Free Models</span>
+        </div>
+        <h1 class="hero-title">
+          Instale seu próprio
+          <span class="gradient-text">Assistente de IA</span>
+          em 1 clique
+        </h1>
+        <p class="hero-description">
+          OrionClaw é um instalador automatizado para OpenClaw com foco em modelos gratuitos.
+          Configure em minutos, não em horas.
+        </p>
+        <div class="hero-cta">
+          <button class="btn btn-primary" onclick="scrollToInstall()">
+            <span class="btn-icon">🚀</span>
+            Começar Instalação
+          </button>
+          <button class="btn btn-secondary" onclick="window.open('https://github.com/Neguiolidas/OrionClaw', '_blank')">
+            <span class="btn-icon">📖</span>
+            Ver no GitHub
+          </button>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-value">∞</span>
+            <span class="stat-label">Agentes IA</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">6+</span>
+            <span class="stat-label">Provedores Grátis</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">100%</span>
+            <span class="stat-label">Open Source</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+      <h2 class="section-title">O que você vai ter</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>Multi-Agente Customizável</h3>
+          <p>Configure quantos agentes quiser. Cada agente é independente e pode ter sua própria personalidade.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧠</div>
+          <h3>Memória Persistente</h3>
+          <p>Sistema de memória em camadas para lembrar de tudo. RAG integrado para contexto inteligente.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💸</div>
+          <h3>Modelos 100% Gratuitos</h3>
+          <p>GLM-5 (até 30/Abr), Llama 4, Gemini Flash, Qwen3, Ollama local - acesso ilimitado sem pagar.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <h3>Multi-Canal</h3>
+          <p>Telegram, Discord, WhatsApp. Acesse de qualquer lugar, a qualquer momento.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Ollama Local</h3>
+          <p>Execute modelos localmente sem internet. Privacidade total, zero custo de API.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <h3>Auto-Start</h3>
+          <p>Configura e inicia automaticamente após instalação. Zero configuração manual.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Installation Section -->
+    <section id="install" class="install-section">
+      <h2 class="section-title">Configurar Instalação</h2>
+      <p class="section-subtitle">Preencha suas preferências e gere o script personalizado</p>
+
+      <div class="installer-container">
+        <!-- Progress Steps -->
+        <div class="progress-steps">
+          <div class="step active" data-step="1">
+            <div class="step-number">1</div>
+            <div class="step-label">Sistema</div>
+          </div>
+          <div class="step" data-step="2">
+            <div class="step-number">2</div>
+            <div class="step-label">Modelos</div>
+          </div>
+          <div class="step" data-step="3">
+            <div class="step-number">3</div>
+            <div class="step-label">Agentes</div>
+          </div>
+          <div class="step" data-step="4">
+            <div class="step-number">4</div>
+            <div class="step-label">Canais</div>
+          </div>
+          <div class="step" data-step="5">
+            <div class="step-number">5</div>
+            <div class="step-label">Instalar</div>
+          </div>
+        </div>
+
+        <!-- Step Forms -->
+        <form id="installer-form" class="installer-form">
+          <!-- Step 1: Sistema -->
+          <div class="form-step active" data-step="1">
+            <h3>🖥️ Sistema Operacional</h3>
+            <div class="os-selector">
+              <label class="os-option">
+                <input type="radio" name="os" value="windows" checked>
+                <div class="os-card">
+                  <span class="os-icon">🪟</span>
+                  <span class="os-name">Windows</span>
+                  <span class="os-desc">Windows 10/11 (WSL2)</span>
+                </div>
+              </label>
+              <label class="os-option">
+                <input type="radio" name="os" value="macos">
+                <div class="os-card">
+                  <span class="os-icon">🍎</span>
+                  <span class="os-name">macOS</span>
+                  <span class="os-desc">macOS 12+ (Homebrew)</span>
+                </div>
+              </label>
+              <label class="os-option">
+                <input type="radio" name="os" value="linux">
+                <div class="os-card">
+                  <span class="os-icon">🐧</span>
+                  <span class="os-name">Linux</span>
+                  <span class="os-desc">Ubuntu/Debian/Fedora</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label>Diretório de Instalação</label>
+              <input type="text" id="install-dir" placeholder="C:\OrionClaw" value="C:\OrionClaw">
+              <span class="form-hint">Onde o OrionClaw será instalado</span>
+            </div>
+
+            <div class="form-group">
+              <label>
+                <input type="checkbox" id="auto-start" checked>
+                Iniciar automaticamente após instalação
+              </label>
+              <span class="form-hint">Abre o gateway e interface TUI automaticamente</span>
+            </div>
+          </div>
+
+          <!-- Step 2: Modelos -->
+          <div class="form-step" data-step="2">
+            <h3>🤖 Provedores de IA</h3>
+            <p class="step-description">Selecione os provedores e insira suas API keys. Recomendamos começar com os 100% gratuitos.</p>
+
+            <div class="providers-grid">
+              <!-- Modal GLM-5 -->
+              <label class="provider-option">
+                <input type="checkbox" name="providers" value="modal" checked>
+                <div class="provider-card featured">
+                  <div class="provider-header">
+                    <span class="provider-icon">🚀</span>
+                    <span class="provider-name">Modal GLM-5</span>
+                    <span class="provider-badge free promo">GRÁTIS até 30/Abr</span>
+                  </div>
+                  <p class="provider-desc">GLM-5 com reasoning ilimitado. Qualidade GPT-4 nível, totalmente grátis!</p>
+                  <div class="provider-warning">
+                    <span class="warning-icon">⏰</span>
+                    <span>Promoção termina em 30 de Abril de 2026</span>
+                  </div>
+                  <div class="provider-input">
+                    <input type="text" name="modal-key" placeholder="ak-...">
+                    <a href="https://modal.com/glm-5-endpoint" target="_blank" class="input-link">Obter Token</a>
+                  </div>
+                </div>
+              </label>
+
+              <!-- OpenRouter -->
+              <label class="provider-option">
+                <input type="checkbox" name="providers" value="openrouter" checked>
+                <div class="provider-card">
+                  <div class="provider-header">
+                    <span class="provider-icon">🌐</span>
+                    <span class="provider-name">OpenRouter</span>
+                    <span class="provider-badge free">Grátis</span>
+                  </div>
+                  <p class="provider-desc">Llama 4, Mistral, Qwen3, DeepSeek. Free tier muito generoso.</p>
+                  <div class="provider-input">
+                    <input type="text" name="openrouter-key" placeholder="sk-or-v1-...">
+                    <a href="https://openrouter.ai/keys" target="_blank" class="input-link">Obter API Key</a>
+                  </div>
+                </div>
+              </label>
+
+              <!-- Ollama -->
+              <label class="provider-option">
+                <input type="checkbox" name="providers" value="ollama">
+                <div class="provider-card">
+                  <div class="provider-header">
+                    <span class="provider-icon">🦙</span>
+                    <span class="provider-name">Ollama (Local)</span>
+                    <span class="provider-badge free">100% Grátis</span>
+                  </div>
+                  <p class="provider-desc">Execute modelos localmente. Llama 3, Mistral, Phi-3. Zero custo, privacidade total.</p>
+                  <div class="provider-note">
+                    <span>Requer: 8GB+ RAM (16GB recomendado)</span>
+                  </div>
+                </div>
+              </label>
+
+              <!-- Google AI -->
+              <label class="provider-option">
+                <input type="checkbox" name="providers" value="google">
+                <div class="provider-card">
+                  <div class="provider-header">
+                    <span class="provider-icon">🔷</span>
+                    <span class="provider-name">Google AI</span>
+                    <span class="provider-badge free">Grátis</span>
+                  </div>
+                  <p class="provider-desc">Gemini 2.5 Flash, Gemma 3 27B. Free tier disponível.</p>
+                  <div class="provider-input">
+                    <input type="text" name="google-key" placeholder="AIzaSy...">
+                    <a href="https://aistudio.google.com/apikey" target="_blank" class="input-link">Obter API Key</a>
+                  </div>
+                </div>
+              </label>
+
+              <!-- OpenCode -->
+              <label class="provider-option">
+                <input type="checkbox" name="providers" value="opencode">
+                <div class="provider-card">
+                  <div class="provider-header">
+                    <span class="provider-icon">💻</span>
+                    <span class="provider-name">OpenCode</span>
+                    <span class="provider-badge free">Grátis</span>
+                  </div>
+                  <p class="provider-desc">GLM-4.7 Free, Kimi K2.5 Free. Modelos gratuitos de alta qualidade.</p>
+                  <div class="provider-input">
+                    <input type="text" name="opencode-key" placeholder="opencode_...">
+                    <a href="https://opencode.ai" target="_blank" class="input-link">Obter API Key</a>
+                  </div>
+                </div>
+              </label>
+
+              <!-- Kilo Gateway -->
+              <label class="provider-option">
+                <input type="checkbox" name="providers" value="kilo">
+                <div class="provider-card">
+                  <div class="provider-header">
+                    <span class="provider-icon">⚡</span>
+                    <span class="provider-name">Kilo Gateway</span>
+                    <span class="provider-badge free">Grátis</span>
+                  </div>
+                  <p class="provider-desc">Gateway unificado com auto-routing. Seleciona o melhor modelo automaticamente.</p>
+                  <div class="provider-input">
+                    <input type="text" name="kilo-key" placeholder="kilo_...">
+                    <a href="https://kilocode.ai" target="_blank" class="input-link">Obter API Key</a>
+                  </div>
+                </div>
+              </label>
+
+              <!-- Anthropic -->
+              <label class="provider-option">
+                <input type="checkbox" name="providers" value="anthropic">
+                <div class="provider-card">
+                  <div class="provider-header">
+                    <span class="provider-icon">🧬</span>
+                    <span class="provider-name">Anthropic</span>
+                    <span class="provider-badge paid">Pago</span>
+                  </div>
+                  <p class="provider-desc">Claude Opus 4.5, Claude Sonnet 4.6. Qualidade premium.</p>
+                  <div class="provider-input">
+                    <input type="text" name="anthropic-key" placeholder="sk-ant-...">
+                    <a href="https://console.anthropic.com/" target="_blank" class="input-link">Obter API Key</a>
+                  </div>
+                </div>
+              </label>
+
+              <!-- OpenAI -->
+              <label class="provider-option">
+                <input type="checkbox" name="providers" value="openai">
+                <div class="provider-card">
+                  <div class="provider-header">
+                    <span class="provider-icon">🤖</span>
+                    <span class="provider-name">OpenAI</span>
+                    <span class="provider-badge paid">Pago</span>
+                  </div>
+                  <p class="provider-desc">GPT-4.5, o3, o4-mini. O mais popular.</p>
+                  <div class="provider-input">
+                    <input type="text" name="openai-key" placeholder="sk-...">
+                    <a href="https://platform.openai.com/api-keys" target="_blank" class="input-link">Obter API Key</a>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Step 3: Agentes -->
+          <div class="form-step" data-step="3">
+            <h3>🤖 Configuração de Agentes</h3>
+            <p class="step-description">Configure quantos agentes você quer. Cada agente é independente e customizável.</p>
+
+            <div class="agents-warning">
+              <div class="warning-icon-large">⚠️</div>
+              <div class="warning-content">
+                <h4>Atenção: Custo por Agente</h4>
+                <p>Cada agente que roda em paralelo <strong>consome tokens do provedor</strong>.</p>
+                <ul>
+                  <li>1 agente = uso normal</li>
+                  <li>3-5 agentes = 3-5x mais tokens</li>
+                  <li>10+ agentes = uso intensivo (recomendado apenas com provedores gratuitos)</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Quantidade de Agentes</label>
+              <div class="agents-slider-container">
+                <input type="range" id="agent-count" name="agent-count" min="1" max="15" value="1" class="agents-slider">
+                <div class="agents-value">
+                  <span id="agent-count-display">1</span>
+                  <span class="agents-label">agente(s)</span>
+                </div>
+              </div>
+              <div class="agents-presets">
+                <button type="button" class="preset-btn" onclick="setAgentCount(1)">Solo (1)</button>
+                <button type="button" class="preset-btn" onclick="setAgentCount(3)">Trio (3)</button>
+                <button type="button" class="preset-btn" onclick="setAgentCount(5)">Squad (5)</button>
+                <button type="button" class="preset-btn" onclick="setAgentCount(10)">Team (10)</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Nome do Agente Principal</label>
+              <input type="text" id="agent-name" placeholder="Ex: Jarvis, Friday, Cortana..." value="">
+              <span class="form-hint">O nome que você quer dar ao seu assistente principal</span>
+            </div>
+
+            <div class="form-group">
+              <label>Personalidade</label>
+              <select id="agent-personality" class="form-select">
+                <option value="neutral">Neutro - Profissional e objetivo</option>
+                <option value="friendly">Amigável - Casual e acolhedor</option>
+                <option value="formal">Formal - Respeitoso e técnico</option>
+                <option value="witty">Espirituoso - Inteligente com humor</option>
+                <option value="custom">Customizado - Defina você mesmo</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="custom-personality-group" style="display: none;">
+              <label>Descrição da Personalidade</label>
+              <textarea id="custom-personality" placeholder="Descreva como você quer que seu agente se comporte..."></textarea>
+            </div>
+
+            <div class="agents-cost-estimate">
+              <h4>💰 Estimativa de Custo</h4>
+              <div id="cost-estimate">
+                <p class="cost-free">✅ Com provedores gratuitos selecionados: <strong>$0/mês</strong></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4: Canais -->
+          <div class="form-step" data-step="4">
+            <h3>💬 Canais de Comunicação</h3>
+            <p class="step-description">Escolha como você quer interagir com seu assistente. Terminal/CLI está sempre disponível.</p>
+
+            <div class="channels-grid">
+              <label class="channel-option">
+                <input type="checkbox" name="channels" value="telegram" checked>
+                <div class="channel-card">
+                  <span class="channel-icon">📱</span>
+                  <span class="channel-name">Telegram</span>
+                  <div class="channel-input">
+                    <input type="text" name="telegram-token" placeholder="1234567890:ABCdefGHIjklMNOpqrsTUVwxyz">
+                    <a href="https://t.me/BotFather" target="_blank" class="input-link">Criar Bot</a>
+                  </div>
+                  <span class="channel-hint">Token do bot obtido via @BotFather</span>
+                </div>
+              </label>
+
+              <label class="channel-option">
+                <input type="checkbox" name="channels" value="discord">
+                <div class="channel-card">
+                  <span class="channel-icon">🎮</span>
+                  <span class="channel-name">Discord</span>
+                  <div class="channel-input">
+                    <input type="text" name="discord-token" placeholder="MTk4NjIyNDgzNDc...">
+                    <a href="https://discord.com/developers/applications" target="_blank" class="input-link">Criar Bot</a>
+                  </div>
+                  <span class="channel-hint">Bot Token do Discord Developer Portal</span>
+                </div>
+              </label>
+
+              <label class="channel-option">
+                <input type="checkbox" name="channels" value="whatsapp">
+                <div class="channel-card">
+                  <span class="channel-icon">💚</span>
+                  <span class="channel-name">WhatsApp</span>
+                  <span class="channel-note">Configure via QR Code após instalação</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label>Seu nome (como o assistente vai te chamar)</label>
+              <input type="text" id="user-name" placeholder="Seu nome" required>
+            </div>
+          </div>
+
+          <!-- Step 5: Instalar -->
+          <div class="form-step" data-step="5">
+            <h3>🚀 Pronto para Instalar!</h3>
+            
+            <div class="summary-card">
+              <h4>Resumo da Configuração</h4>
+              <div id="config-summary"></div>
+            </div>
+
+            <div class="install-options">
+              <div class="install-option">
+                <h4>Opção 1: Download do Script</h4>
+                <p>Baixe e execute manualmente</p>
+                <button type="button" class="btn btn-primary" onclick="downloadScript()">
+                  <span class="btn-icon">📥</span>
+                  Baixar Script
+                </button>
+              </div>
+
+              <div class="install-option">
+                <h4>Opção 2: Copiar Comando</h4>
+                <p>Cole no PowerShell/Terminal como Administrador</p>
+                <div class="code-block">
+                  <code id="install-command"></code>
+                  <button type="button" class="copy-btn" onclick="copyCommand()">
+                    <span>📋</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="install-notes">
+              <h4>⚠️ Importante</h4>
+              <ul>
+                <li>Execute o PowerShell/Terminal como <strong>Administrador</strong></li>
+                <li>A instalação pode levar 5-15 minutos dependendo da conexão</li>
+                <li><strong>Dependências instaladas automaticamente:</strong></li>
+                <ul>
+                  <li>Node.js 22 LTS</li>
+                  <li>Git</li>
+                  <li>OpenClaw CLI</li>
+                  <li>Dependências do sistema (curl, build-essential)</li>
+                </ul>
+                <li>Se selecionou Ollama, será instalado automaticamente</li>
+                <li>Gateway iniciará automaticamente após instalação</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Navigation Buttons -->
+          <div class="form-navigation">
+            <button type="button" class="btn btn-ghost" id="prev-btn" onclick="prevStep()" style="display: none;">
+              ← Anterior
+            </button>
+            <button type="button" class="btn btn-primary" id="next-btn" onclick="nextStep()">
+              Próximo →
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-logo">
+          <span class="logo-icon">🐺</span>
+          <span>OrionClaw</span>
+        </div>
+        <p>Instalador automatizado para OpenClaw</p>
+        <div class="footer-links">
+          <a href="https://neguitech.app">Neguitech</a>
+          <a href="https://github.com/Neguiolidas/OrionClaw">GitHub</a>
+          <a href="https://docs.openclaw.ai">OpenClaw Docs</a>
+        </div>
+        <p class="footer-copyright">© 2026 Neguitech. Feito com 🍷</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
