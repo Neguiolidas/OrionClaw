@@ -1,32 +1,22 @@
-#Requires -RunAsAdministrator
-# OrionClaw One-Click Installer - Windows Native
+# OrionClaw One-Click Installer for Windows
+# Based on OpenClaw - Uses the official OpenClaw installer
 # Repository: https://github.com/Neguiolidas/OrionClaw
 
+param(
+    [string]$WorkspaceDir = "C:\OrionClaw",
+    [string]$UserName = "Usuario",
+    [string]$AgentName = "Assistant",
+    [switch]$SkipOpenClawInstall
+)
+
 $ErrorActionPreference = "Stop"
-$ProgressPreference = "SilentlyContinue"
 
-# Force UTF-8 output
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-$OutputEncoding = [System.Text.Encoding]::UTF8
-
-# Configuration
-$INSTALL_DIR = "C:\OrionClaw"
-$NODE_VERSION = "22.14.0"
-
-function Show-Banner {
-    Clear-Host
-    Write-Host ""
-    Write-Host "  ================================================================" -ForegroundColor Cyan
-    Write-Host "  |                                                              |" -ForegroundColor Cyan
-    Write-Host "  |     ORIONCLAW - One-Click AI Assistant Installer             |" -ForegroundColor Cyan
-    Write-Host "  |     Based on OpenClaw - 100% Free Models                     |" -ForegroundColor Cyan
-    Write-Host "  |                                                              |" -ForegroundColor Cyan
-    Write-Host "  ================================================================" -ForegroundColor Cyan
-    Write-Host ""
-}
-
+# Colors
 function Write-Step {
-    param([string]$Message, [string]$Status = "INFO")
+    param(
+        [string]$Message,
+        [string]$Status = "INFO"
+    )
     $icon = switch ($Status) {
         "OK"    { "[OK]" }
         "WAIT"  { "[..]" }
@@ -45,155 +35,75 @@ function Write-Step {
     Write-Host $Message
 }
 
-function Test-Command {
-    param([string]$Command)
-    $null -ne (Get-Command $Command -ErrorAction SilentlyContinue)
-}
-
-# Check Admin
-$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-if (-not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Write-Host "  [XX] Execute como Administrador!" -ForegroundColor Red
-    Write-Host ""
-    Write-Host "  Clique direito no PowerShell > Executar como Administrador" -ForegroundColor Gray
-    Write-Host ""
-    Read-Host "  Pressione Enter para sair"
-    exit 1
-}
-
-Show-Banner
-Write-Step "Executando como Administrador" "OK"
-
-# ============================================================
-# STEP 1: Install Node.js
-# ============================================================
+# Banner
+Clear-Host
 Write-Host ""
-Write-Host "  === PASSO 1: Verificando Node.js ===" -ForegroundColor White
+Write-Host "  ================================================================" -ForegroundColor Cyan
+Write-Host "  |                                                              |" -ForegroundColor Cyan
+Write-Host "  |     ORIONCLAW - One-Click AI Assistant Installer             |" -ForegroundColor Cyan
+Write-Host "  |     Powered by OpenClaw - 100% Free Models Available         |" -ForegroundColor Cyan
+Write-Host "  |                                                              |" -ForegroundColor Cyan
+Write-Host "  ================================================================" -ForegroundColor Cyan
 Write-Host ""
 
-$nodeInstalled = $false
-$nodeVersion = $null
+# ============================================================
+# STEP 1: Run Official OpenClaw Installer
+# ============================================================
+Write-Host "  === PASSO 1: Instalando OpenClaw ===" -ForegroundColor White
+Write-Host ""
 
-if (Test-Command "node") {
-    $nodeVersion = (node --version 2>$null)
-    if ($nodeVersion) {
-        $majorVersion = [int]($nodeVersion -replace 'v(\d+)\..*', '$1')
-        if ($majorVersion -ge 20) {
-            Write-Step "Node.js $nodeVersion encontrado" "OK"
-            $nodeInstalled = $true
-        } else {
-            Write-Step "Node.js $nodeVersion encontrado (versao antiga)" "WARN"
-        }
-    }
-}
-
-if (-not $nodeInstalled) {
-    Write-Step "Instalando Node.js $NODE_VERSION..." "WAIT"
-    
-    $nodeUrl = "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-x64.msi"
-    $nodeInstaller = "$env:TEMP\node-installer.msi"
+if (-not $SkipOpenClawInstall) {
+    Write-Step "Baixando e executando instalador oficial do OpenClaw..." "WAIT"
+    Write-Host ""
     
     try {
-        Invoke-WebRequest -Uri $nodeUrl -OutFile $nodeInstaller -UseBasicParsing
-        Start-Process msiexec.exe -ArgumentList "/i `"$nodeInstaller`" /qn /norestart" -Wait -NoNewWindow
+        # Use the official OpenClaw installer with -NoOnboard
+        # This handles Node.js, Git, and OpenClaw installation properly
+        $installScript = Invoke-RestMethod -Uri "https://openclaw.ai/install.ps1" -UseBasicParsing
         
-        # Refresh PATH
-        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+        # Execute with -NoOnboard so we can configure workspace first
+        $scriptBlock = [scriptblock]::Create($installScript)
+        & $scriptBlock -NoOnboard
         
-        # Verify installation
-        Start-Sleep -Seconds 2
-        if (Test-Command "node") {
-            $nodeVersion = (node --version 2>$null)
-            Write-Step "Node.js $nodeVersion instalado" "OK"
-        } else {
-            Write-Step "Node.js instalado (reinicie o terminal para usar)" "WARN"
-        }
-        
-        Remove-Item $nodeInstaller -Force -ErrorAction SilentlyContinue
-    } catch {
-        Write-Step "Erro ao instalar Node.js: $_" "ERROR"
         Write-Host ""
-        Write-Host "  Instale manualmente: https://nodejs.org/en/download/" -ForegroundColor Gray
+        Write-Step "OpenClaw instalado com sucesso" "OK"
+    }
+    catch {
+        Write-Step "Erro ao instalar OpenClaw: $_" "ERROR"
+        Write-Host ""
+        Write-Host "  Tente instalar manualmente:" -ForegroundColor Yellow
+        Write-Host "  irm https://openclaw.ai/install.ps1 | iex" -ForegroundColor Cyan
+        Write-Host ""
         Read-Host "  Pressione Enter para sair"
         exit 1
     }
+    
+    # Refresh PATH after OpenClaw install
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+}
+else {
+    Write-Step "Pulando instalacao do OpenClaw (--SkipOpenClawInstall)" "WARN"
 }
 
 # ============================================================
-# STEP 2: Install Git
+# STEP 2: Create Workspace
 # ============================================================
 Write-Host ""
-Write-Host "  === PASSO 2: Verificando Git ===" -ForegroundColor White
+Write-Host "  === PASSO 2: Criando Workspace ===" -ForegroundColor White
 Write-Host ""
 
-if (Test-Command "git") {
-    $gitVersion = (git --version 2>$null)
-    Write-Step "$gitVersion encontrado" "OK"
-} else {
-    Write-Step "Instalando Git..." "WAIT"
-    
-    $gitUrl = "https://github.com/git-for-windows/git/releases/download/v2.47.1.windows.1/Git-2.47.1-64-bit.exe"
-    $gitInstaller = "$env:TEMP\git-installer.exe"
-    
-    try {
-        Invoke-WebRequest -Uri $gitUrl -OutFile $gitInstaller -UseBasicParsing
-        Start-Process $gitInstaller -ArgumentList "/VERYSILENT /NORESTART /NOCANCEL /SP- /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS /COMPONENTS=`"icons,ext\reg\shellhere,assoc,assoc_sh`"" -Wait -NoNewWindow
-        
-        # Refresh PATH
-        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
-        
-        Write-Step "Git instalado" "OK"
-        Remove-Item $gitInstaller -Force -ErrorAction SilentlyContinue
-    } catch {
-        Write-Step "Erro ao instalar Git: $_" "ERROR"
-        Write-Host "  Instale manualmente: https://git-scm.com/download/win" -ForegroundColor Gray
-    }
-}
-
-# ============================================================
-# STEP 3: Install OpenClaw (OrionClaw CLI)
-# ============================================================
-Write-Host ""
-Write-Host "  === PASSO 3: Instalando OrionClaw CLI ===" -ForegroundColor White
-Write-Host ""
-
-Write-Step "Instalando via npm..." "WAIT"
-
-try {
-    # Install openclaw globally
-    $npmOutput = npm install -g openclaw 2>&1
-    
-    if ($LASTEXITCODE -eq 0) {
-        Write-Step "OrionClaw CLI instalado" "OK"
-    } else {
-        throw "npm install failed"
-    }
-} catch {
-    Write-Step "Erro ao instalar: $_" "ERROR"
-    Write-Host ""
-    Write-Host "  Tente manualmente: npm install -g openclaw" -ForegroundColor Gray
-    Read-Host "  Pressione Enter para continuar mesmo assim"
-}
-
-# ============================================================
-# STEP 4: Create Workspace
-# ============================================================
-Write-Host ""
-Write-Host "  === PASSO 4: Criando Workspace ===" -ForegroundColor White
-Write-Host ""
-
-Write-Step "Criando diretorio $INSTALL_DIR..." "WAIT"
+Write-Step "Criando diretorio $WorkspaceDir..." "WAIT"
 
 try {
     # Create directories
-    New-Item -ItemType Directory -Path $INSTALL_DIR -Force | Out-Null
-    New-Item -ItemType Directory -Path "$INSTALL_DIR\memory" -Force | Out-Null
+    New-Item -ItemType Directory -Path $WorkspaceDir -Force | Out-Null
+    New-Item -ItemType Directory -Path "$WorkspaceDir\memory" -Force | Out-Null
     
     # Create USER.md
-    $userMd = @"
+    $userContent = @"
 # USER.md - Sobre Voce
 
-- **Nome:** Usuario
+- **Nome:** $UserName
 - **Como chamar:** Senhor
 - **Timezone:** America/Sao_Paulo
 
@@ -201,15 +111,14 @@ try {
 - Respostas diretas e objetivas
 - Portugues brasileiro
 "@
-    Set-Content -Path "$INSTALL_DIR\USER.md" -Value $userMd -Encoding UTF8
+    [System.IO.File]::WriteAllText("$WorkspaceDir\USER.md", $userContent, [System.Text.UTF8Encoding]::new($false))
     
     # Create IDENTITY.md
-    $identityMd = @"
+    $identityContent = @"
 # IDENTITY.md - Quem Eu Sou
 
-- **Nome:** Assistant
+- **Nome:** $AgentName
 - **Criatura:** Assistente IA
-- **Emoji:** (robot)
 - **Vibe:** Profissional, eficiente, prestativo
 
 ## Caracteristicas
@@ -217,10 +126,10 @@ try {
 - Busca ajudar sempre
 - Aprende com cada interacao
 "@
-    Set-Content -Path "$INSTALL_DIR\IDENTITY.md" -Value $identityMd -Encoding UTF8
+    [System.IO.File]::WriteAllText("$WorkspaceDir\IDENTITY.md", $identityContent, [System.Text.UTF8Encoding]::new($false))
     
     # Create AGENTS.md
-    $agentsMd = @"
+    $agentsContent = @"
 # AGENTS.md - Configuracao do Agente
 
 ## Memoria
@@ -236,26 +145,30 @@ try {
 ## Heartbeat
 Verifique periodicamente se ha algo importante.
 "@
-    Set-Content -Path "$INSTALL_DIR\AGENTS.md" -Value $agentsMd -Encoding UTF8
+    [System.IO.File]::WriteAllText("$WorkspaceDir\AGENTS.md", $agentsContent, [System.Text.UTF8Encoding]::new($false))
     
-    Write-Step "Workspace criado em $INSTALL_DIR" "OK"
-} catch {
+    Write-Step "Workspace criado em $WorkspaceDir" "OK"
+}
+catch {
     Write-Step "Erro ao criar workspace: $_" "ERROR"
 }
 
 # ============================================================
-# STEP 5: Create OpenClaw Config
+# STEP 3: Configure OpenClaw
 # ============================================================
 Write-Host ""
-Write-Host "  === PASSO 5: Configurando OrionClaw ===" -ForegroundColor White
+Write-Host "  === PASSO 3: Configurando OpenClaw ===" -ForegroundColor White
 Write-Host ""
 
 Write-Step "Criando configuracao..." "WAIT"
 
-$configDir = "$env:USERPROFILE\.openclaw"
+$configDir = Join-Path $env:USERPROFILE ".openclaw"
 New-Item -ItemType Directory -Path $configDir -Force | Out-Null
 
-$configJson = @"
+# Convert workspace path to forward slashes for JSON
+$workspaceJson = $WorkspaceDir -replace '\\', '/'
+
+$configContent = @"
 {
   "agents": {
     "defaults": {
@@ -266,7 +179,7 @@ $configJson = @"
           "openrouter/z-ai/glm-4.5-air:free"
         ]
       },
-      "workspace": "$($INSTALL_DIR -replace '\\', '/')",
+      "workspace": "$workspaceJson",
       "compaction": {
         "mode": "safeguard",
         "reserveTokensFloor": 30000
@@ -282,40 +195,57 @@ $configJson = @"
 }
 "@
 
-Set-Content -Path "$configDir\openclaw.json" -Value $configJson -Encoding UTF8
-Write-Step "Configuracao criada" "OK"
+[System.IO.File]::WriteAllText("$configDir\openclaw.json", $configContent, [System.Text.UTF8Encoding]::new($false))
+Write-Step "Configuracao criada em $configDir\openclaw.json" "OK"
 
 # ============================================================
-# STEP 6: Create Shortcuts
+# STEP 4: Create Desktop Shortcut
 # ============================================================
 Write-Host ""
-Write-Host "  === PASSO 6: Criando Atalhos ===" -ForegroundColor White
+Write-Host "  === PASSO 4: Criando Atalhos ===" -ForegroundColor White
 Write-Host ""
 
 try {
     # Create batch file for easy launching
     $batchContent = @"
 @echo off
-cd /d "$INSTALL_DIR"
-openclaw tui
+title OrionClaw AI Assistant
+cd /d "$WorkspaceDir"
+echo.
+echo   OrionClaw AI Assistant
+echo   =======================
+echo.
+echo   Iniciando gateway...
+echo.
+openclaw gateway run
 pause
 "@
-    Set-Content -Path "$INSTALL_DIR\OrionClaw.bat" -Value $batchContent -Encoding ASCII
+    [System.IO.File]::WriteAllText("$WorkspaceDir\OrionClaw.bat", $batchContent, [System.Text.Encoding]::ASCII)
+    
+    # Create TUI launcher
+    $tuiBatch = @"
+@echo off
+title OrionClaw TUI
+cd /d "$WorkspaceDir"
+openclaw tui
+"@
+    [System.IO.File]::WriteAllText("$WorkspaceDir\OrionClaw-TUI.bat", $tuiBatch, [System.Text.Encoding]::ASCII)
     
     # Create desktop shortcut
     $desktopPath = [Environment]::GetFolderPath("Desktop")
-    $shortcutPath = "$desktopPath\OrionClaw.lnk"
+    $shortcutPath = Join-Path $desktopPath "OrionClaw.lnk"
     
     $WshShell = New-Object -ComObject WScript.Shell
     $Shortcut = $WshShell.CreateShortcut($shortcutPath)
     $Shortcut.TargetPath = "cmd.exe"
-    $Shortcut.Arguments = "/c `"$INSTALL_DIR\OrionClaw.bat`""
-    $Shortcut.WorkingDirectory = $INSTALL_DIR
+    $Shortcut.Arguments = "/c `"$WorkspaceDir\OrionClaw.bat`""
+    $Shortcut.WorkingDirectory = $WorkspaceDir
     $Shortcut.Description = "OrionClaw AI Assistant"
     $Shortcut.Save()
     
     Write-Step "Atalho criado na Area de Trabalho" "OK"
-} catch {
+}
+catch {
     Write-Step "Erro ao criar atalhos: $_" "WARN"
 }
 
@@ -324,7 +254,9 @@ pause
 # ============================================================
 Write-Host ""
 Write-Host "  ================================================================" -ForegroundColor Green
-Write-Host "  |    INSTALACAO FINALIZADA!                                    |" -ForegroundColor Green
+Write-Host "  |                                                              |" -ForegroundColor Green
+Write-Host "  |              INSTALACAO FINALIZADA!                          |" -ForegroundColor Green
+Write-Host "  |                                                              |" -ForegroundColor Green
 Write-Host "  ================================================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "  Para usar o OrionClaw:" -ForegroundColor White
@@ -332,13 +264,18 @@ Write-Host ""
 Write-Host "    1. Clique no atalho 'OrionClaw' na Area de Trabalho" -ForegroundColor Gray
 Write-Host ""
 Write-Host "    Ou no terminal:" -ForegroundColor Gray
-Write-Host "    cd $INSTALL_DIR" -ForegroundColor Cyan
+Write-Host "    cd $WorkspaceDir" -ForegroundColor Cyan
 Write-Host "    openclaw tui" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "  Comandos uteis:" -ForegroundColor White
 Write-Host "    openclaw configure  - Configurar provedores de IA" -ForegroundColor Gray
 Write-Host "    openclaw doctor     - Diagnosticar problemas" -ForegroundColor Gray
+Write-Host "    openclaw onboard    - Assistente de configuracao" -ForegroundColor Gray
 Write-Host "    openclaw status     - Ver status do gateway" -ForegroundColor Gray
+Write-Host ""
+Write-Host "  Proximo passo recomendado:" -ForegroundColor White
+Write-Host "    openclaw onboard" -ForegroundColor Cyan
+Write-Host "    (Configura provedores de IA, canais como Telegram, etc)" -ForegroundColor Gray
 Write-Host ""
 Write-Host "  Documentacao: https://docs.openclaw.ai" -ForegroundColor DarkGray
 Write-Host ""
