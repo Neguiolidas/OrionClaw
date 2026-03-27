@@ -240,8 +240,8 @@ function generateInstallCommand() {
   const config = getConfig();
   const commandEl = document.getElementById('install-command');
   
-  // Determine base URL - use Cloudflare Pages URL
-  const baseUrl = 'https://orionclaw.pages.dev';
+  // Use current page URL as base (works on any domain)
+  const baseUrl = window.location.origin;
   
   if (config.os === 'windows') {
     commandEl.textContent = 'irm ' + baseUrl + '/install.ps1 | iex';

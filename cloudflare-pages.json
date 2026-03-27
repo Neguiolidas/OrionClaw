@@ -1,0 +1,15 @@
+{
+  "name": "orionclaw",
+  "version": "2.0.0",
+  "build_command": "",
+  "build_output_directory": "web-installer",
+  "root_directory": "",
+  "deployment_configurations": {
+    "production": {
+      "environment_variables": {}
+    },
+    "preview": {
+      "environment_variables": {}
+    }
+  }
+}
